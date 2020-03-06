@@ -63,6 +63,29 @@
   #define FIL_RUNOUT_PIN   PC2
 #endif
 
+// #define SDEF(sname, ...) S sname __VA_OPT__(= { __VA_ARGS__ })
+// SDEF(bar, 1, 2);  ==>  S bar = { 1, 2 };
+
+typedef struct stepperPins
+{
+    int enaPin;
+    int dirPin;
+} StepperPins;
+
+#define PB1 18
+
+#define STEPPER(e,d) \
+ { .enaPin=e, .dirPin=d }
+
+#define X_STEPPER STEPPER(3,PB1)
+
+
+#define STRINGIFY(...) #__VA_ARGS__
+#define STEPPER_PIN(axis,type,gpio) axis "_" type "_PIN "  STRINGIFY( gpio) 
+#define STEPPER(axis,...) "\n" axis "-STEPPER\n\t" __VA_ARGS__ 
+#pragma message(STEPPER("X","              ┌────────┐\n\t"  X_ENABLE_PIN " ┤ EN  __ ├\n\t" STEPPER_PIN( "X", "DIR", X_DIR_PIN )))
+
+
 //
 // Steppers
 //
@@ -72,6 +95,12 @@
 #ifndef X_CS_PIN
   #define X_CS_PIN         PC10
 #endif
+
+#pragma message( STEPPER_PIN( "X", "ENA", X_ENABLE_PIN ) )
+#pragma message( STEPPER_PIN( "X", "STP", X_STEP_PIN ) )
+#pragma message( STEPPER_PIN( "X", "DIR", X_DIR_PIN ) )
+#pragma message( STEPPER_PIN( "X", "CS", X_CS_PIN ) )
+
 
 #define Y_ENABLE_PIN       PB14
 #define Y_STEP_PIN         PB13
